@@ -9,7 +9,7 @@ import (
 
 const (
     // CONN_HOST = "10.6.0.41"
-    CONN_HOST = "localhost"
+    CONN_HOST = "0.0.0.0"
     CONN_PORT = "3333"
     CONN_TYPE = "tcp"
 )
