@@ -36,11 +36,13 @@ func SelectPeer() (string,error) {
 	return "", errors.New("you are alone")
 }
 
-func ConnectToPeer(addres string) {
-	conn, err := net.Dial("tcp", addres)
+func SendMessage(msg string) {
+	peer,_ := SelectPeer()
+	conn, err := net.Dial("tcp", peer)
 	if err != nil {
 		fmt.Println("cannot connect to host")
 	}
+<<<<<<< HEAD
 
 	c:= make(chan string)
 
@@ -49,11 +51,34 @@ func ConnectToPeer(addres string) {
 
 
 func handleRequest(conn net.Conn, c chan string) {
+=======
+	c:= make(chan string)
+
+	go handleConnection(conn, c)
+	c <-msg
+}
+
+
+// func ConnectToPeer(addres string) {
+// 	conn, err := net.Dial("tcp", addres)
+// 	if err != nil {
+// 		fmt.Println("cannot connect to host")
+// 	}
+//
+// 	c:= make(chan string)
+//
+// 	go handleConnection(conn, c)
+// }
+
+
+func handleConnection(conn net.Conn, c chan string) {
+>>>>>>> 0438656c40c9d64d3c0c5382c1484ba0fd5bc898
 // 	switch v := <- c ; v {
 // 	case "w" :
 // 		log.Println("")
 // 		conn.Write([]byte("Ejecuta mi codigo"))
 // 	}
-	conn.Write([]byte("Ejecuta mi codigo"))
+	// msg := <- c
+	conn.Write([]byte(<- c))
 	conn.Close()
 }
