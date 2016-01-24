@@ -22,12 +22,12 @@ func main() {
 	ui := ui.Start()
 
 	cmd := networking.Command{
-		Cmd:  "communicateToPeer",
+		Cmd: "communicateToPeer",
 		Args: map[string]string{
-			"ip": "10.6.0.57",
+			"ip":   "10.6.0.57",
 			"port": "8000",
-			},
-		}
+		},
+	}
 
 	networking.In() <- cmd
 
@@ -90,7 +90,6 @@ func uiEvent(event ui.Event) {
 			Cmd:  "lookup-peers",
 			Args: map[string]string{},
 		}
-<<<<<<< HEAD
 	case ui.PeerSelectRequested:
 		networking.In() <- common.Command{
 			Cmd:  "select-peer",
@@ -101,13 +100,11 @@ func uiEvent(event ui.Event) {
 			Cmd:  "send-message",
 			Args: map[string]string{"msg": event.Data.(string)},
 		}
-=======
 	case ui.UsageRequested:
 		usage.In() <- common.Command{
 			Cmd:  "get-usage",
 			Args: map[string]string{},
 		}
->>>>>>> arturo
 	case ui.UserExit:
 		os.Exit(0)
 	default:
