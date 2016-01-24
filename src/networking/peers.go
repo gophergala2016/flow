@@ -42,7 +42,7 @@ func SendMessage(msg string) {
 	if err != nil {
 		fmt.Println("cannot connect to host")
 	}
-<<<<<<< HEAD
+
 
 	c:= make(chan string)
 
@@ -51,7 +51,6 @@ func SendMessage(msg string) {
 
 
 func handleRequest(conn net.Conn, c chan string) {
-=======
 	c:= make(chan string)
 
 	go handleConnection(conn, c)
@@ -72,7 +71,7 @@ func handleRequest(conn net.Conn, c chan string) {
 
 
 func handleConnection(conn net.Conn, c chan string) {
->>>>>>> 0438656c40c9d64d3c0c5382c1484ba0fd5bc898
+
 // 	switch v := <- c ; v {
 // 	case "w" :
 // 		log.Println("")
