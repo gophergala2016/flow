@@ -54,10 +54,6 @@ func loop(input <-chan Command) {
 		switch c.Cmd {
 		case "print":
 			fmt.Println(c.Args["msg"])
-			out <- Event{
-				Type: Connection,
-				Data: nil,
-			}
 		default:
 		}
 	}
