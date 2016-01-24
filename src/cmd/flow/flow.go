@@ -15,9 +15,12 @@ func main() {
 	cmd := networking.Command{
 		Cmd:  "communicateToPeer",
 		Args: map[string]string{
-			"ip": "...",
-			"port" "..."
+			"ip": "10.6.0.57",
+			"port": "8000",
+			},
 		}
+
+	networking.In() <- cmd
 
 	for {
 		select {

@@ -3,6 +3,7 @@ package networking
 import (
 	"fmt"
 	"net"
+	"log"
 )
 
 // EventType define la clase de eventos que se pueden emitir
@@ -58,24 +59,26 @@ func loop(input <-chan Command) {
 		case "print":
 			fmt.Println(c.Args["msg"])
 		case "communicateToPeer":
-			hostPort := net.JoinHostPort(c.Arg["ip"], c.Arg["port"])
+			hostPort := net.JoinHostPort(c.Args["ip"], c.Args["port"])
 			conn, err := net.Dial("tcp", hostPort)
 			if err != nil {
 				fmt.Println("Cannot connect to host")
 			}
+			// log.Println("alibaba")
 			c := make(chan string)
+			go handleRequest(conn, c)
 			c <- "w" // [w, r, x]
-			go comp.HandleRequest(conn, c chan string)
 		default:
 		}
 	}
 }
 
 // en paquete comp
-func handleRequest(conn net.Conn, c chan Algo) {
+func handleRequest(conn net.Conn, c chan string) {
 	switch v := <- c ; v {
 	case "w" :
-		conn.Write([]byte("Ejecuta mi codigo"))	
+		log.Println("alibaba")
+		conn.Write([]byte("Ejecuta mi codigo"))
 	}
 	conn.Close()
 }
