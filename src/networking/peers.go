@@ -1,9 +1,10 @@
 package networking
 
 import (
+	"errors"
 	"fmt"
 	"net"
-	"errors"
+
 	"github.com/hashicorp/mdns"
 )
 
@@ -12,10 +13,22 @@ func LookupPeers() <-chan []string {
 	entriesCh := make(chan *mdns.ServiceEntry, 4)
 	resChan := make(chan []string, 1)
 	go func(ch chan<- []string) {
-		var entries []string
+		var entries []string             // peers
+		addrs, _ := net.InterfaceAddrs() // interfaces locales
 		for entry := range entriesCh {
-			entries = append(entries, net.JoinHostPort(entry.AddrV4.String(),
-				fmt.Sprintf("%d", entry.Port)))
+			addr := entry.AddrV4 // dirección de host encontrado
+			skip := false        // saltar o no esta dirección
+			// buscar si peer encontrado es máquina propia
+			for i := range addrs {
+				n := addrs[i].(*net.IPNet) // hacer type assertion
+				if n.IP.Equal(addr) {
+					skip = true
+				}
+			}
+			if !skip {
+				entries = append(entries, net.JoinHostPort(addr.String(),
+					fmt.Sprintf("%d", entry.Port)))
+			}
 		}
 		resChan <- entries
 	}(resChan)
@@ -24,30 +37,28 @@ func LookupPeers() <-chan []string {
 	return resChan
 }
 
-
-func SelectPeer() (string,error) {
+func SelectPeer() (string, error) {
 	c := LookupPeers()
-	peers := <- c
+	peers := <-c
 	//Regresa el segundo elemento de la lista de peers
 	if len(peers) >= 2 {
 		peer_selected := peers[1]
-		return peer_selected,nil
+		return peer_selected, nil
 	}
-	return "",errors.New("you are alone")
+	return "", errors.New("you are alone")
 }
 
 func SendMessage(msg string) {
-	peer,_ := SelectPeer()
+	peer, _ := SelectPeer()
 	conn, err := net.Dial("tcp", peer)
 	if err != nil {
 		fmt.Println("cannot connect to host")
 	}
-	c:= make(chan string)
+	c := make(chan string)
 
 	go handleConnection(conn, c)
-	c <-msg
+	c <- msg
 }
-
 
 // func ConnectToPeer(addres string) {
 // 	conn, err := net.Dial("tcp", addres)
@@ -60,14 +71,13 @@ func SendMessage(msg string) {
 // 	go handleConnection(conn, c)
 // }
 
-
 func handleConnection(conn net.Conn, c chan string) {
-// 	switch v := <- c ; v {
-// 	case "w" :
-// 		log.Println("")
-// 		conn.Write([]byte("Ejecuta mi codigo"))
-// 	}
+	// 	switch v := <- c ; v {
+	// 	case "w" :
+	// 		log.Println("")
+	// 		conn.Write([]byte("Ejecuta mi codigo"))
+	// 	}
 	// msg := <- c
-	conn.Write([]byte(<- c))
+	conn.Write([]byte(<-c))
 	conn.Close()
 }

@@ -1,9 +1,11 @@
 package networking
 
 import (
+	"common"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
 	"github.com/hashicorp/mdns"
 )
 
@@ -33,17 +35,11 @@ type Event struct {
 	Data interface{}
 }
 
-// Command se utiliza para mandar comandos a este módulo
-type Command struct {
-	Cmd  string
-	Args map[string]string
-}
-
-var in chan Command
+var in chan common.Command
 var out chan Event
 
 func init() {
-	in = make(chan Command)
+	in = make(chan common.Command)
 	out = make(chan Event)
 }
 
@@ -54,11 +50,11 @@ func Start() <-chan Event {
 }
 
 // In regresa el channel para mandar comandos al módulo
-func In() chan<- Command {
+func In() chan<- common.Command {
 	return in
 }
 
-func loop(input <-chan Command) {
+func loop(input <-chan common.Command) {
 	host, err := os.Hostname()
 	if err != nil {
 		log.Fatal("imposible obtener hostname para publicar servicio mDNS")
@@ -84,11 +80,11 @@ func loop(input <-chan Command) {
 				Data: peerTable,
 			}
 		case "select-peer":
-			p,err := SelectPeer()
+			p, err := SelectPeer()
 			if err != nil {
 				out <- Event{
 					Type: Error,
-					Data: fmt.Sprintf("error selecting peer: %s",err),
+					Data: fmt.Sprintf("error selecting peer: %s", err),
 				}
 			} else {
 				out <- Event{
