@@ -1,7 +1,6 @@
 package networking
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -73,8 +72,6 @@ func loop(input <-chan Command) {
 
 	for c := range input {
 		switch c.Cmd {
-		case "print":
-			fmt.Println(c.Args["msg"])
 		case "lookup-peers":
 			p := LookupPeers()
 			peerTable := <-p
