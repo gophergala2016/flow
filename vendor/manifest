@@ -39,6 +39,13 @@
 			"repository": "https://github.com/peterh/liner",
 			"revision": "72909af234e0e355af10d0ace679446a6c5d7ec3",
 			"branch": "master"
+		},
+		{
+			"importpath": "github.com/shirou/gopsutil/cpu",
+			"repository": "https://github.com/shirou/gopsutil",
+			"revision": "85bf0974ed06e4e668595ae2b4de02e772a2819b",
+			"branch": "master",
+			"path": "/cpu"
 		}
 	]
 }
