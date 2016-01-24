@@ -14,6 +14,8 @@ type EventType int
 const (
 	// PeerLookupRequested significa que el usuario ha pedido un lookup de peers
 	PeerLookupRequested EventType = iota
+	// UsageRequested significa que el usuario quere el uso de su CPU
+	UsageRequested
 	// UserExit significa que el usuario quiere salir del programa
 	UserExit
 )
@@ -72,6 +74,11 @@ func checkCmd(cmd string) {
 		fmt.Println("haciendo lookup, por favor espera...")
 		out <- Event{
 			Type: PeerLookupRequested,
+		}
+	case "usage":
+		fmt.Println("obteniendo uso, por favor espera...")
+		out <- Event{
+			Type: UsageRequested,
 		}
 	case "":
 	default:
