@@ -48,6 +48,18 @@ func netEvent(event networking.Event) {
 			Cmd:  "print",
 			Args: map[string]string{"msg": peerMsg},
 		}
+	case networking.PeerSelected:
+		peer, ok := event.Data.(string)
+		peerMsg := ""
+		if !ok {
+			log.Fatalf("datos incorrectos para evento 'peers-found'")
+		} else {
+			peerMsg = "selected peer " + peer
+		}
+		ui.In() <- ui.Command{
+			Cmd:  "print",
+			Args: map[string]string{"msg": peerMsg},
+		}
 	}
 }
 
@@ -56,6 +68,11 @@ func uiEvent(event ui.Event) {
 	case ui.PeerLookupRequested:
 		networking.In() <- common.Command{
 			Cmd:  "lookup-peers",
+			Args: map[string]string{},
+		}
+	case ui.PeerSelectRequested:
+		networking.In() <- networking.Command{
+			Cmd: "select-peer",
 			Args: map[string]string{},
 		}
 	default:

@@ -12,6 +12,8 @@ type EventType int
 
 const (
 	PeerLookupRequested EventType = iota
+	
+	PeerSelectRequested
 )
 
 // Event se utiliza para representar un evento emitido
@@ -64,6 +66,11 @@ func checkCmd(cmd string) {
 		fmt.Println("haciendo lookup, por favor espera...")
 		out <- Event{
 			Type: PeerLookupRequested,
+		}
+	case "select-one":
+		fmt.Println("Selecting a peer")
+		out <- Event{
+			Type: PeerSelectRequested,
 		}
 	case "":
 	default:
