@@ -56,26 +56,31 @@ func In() chan<- Command {
 }
 
 func loop(input <-chan Command) {
-	host, _ := os.Hostname()
-	info := []string{"Flow peer worker"}
-	service, err := mdns.NewMDNSService(host, "_flow._tcp", "", "", 8000, nil, info)
+	host, err := os.Hostname()
 	if err != nil {
-		log.Fatalf("imposible crear servidor mDNS: %s", err.Error())
+		log.Fatal("imposible obtener hostname para publicar servicio mDNS")
+	}
+	info := []string{"Flow distributed computing peer"}
+	service, err := mdns.NewMDNSService(host, "_flow._tcp", "", "", 3569, nil, info)
+	if err != nil {
+		log.Fatal("imposible crear servicio de mDNS")
 	}
 	server, err := mdns.NewServer(&mdns.Config{Zone: service})
 	if err != nil {
-		log.Fatalf("imposible iniciar servidor mDNS: %s", err.Error())
+		log.Fatal("imposible iniciar servicio de mDNS")
 	}
 	defer server.Shutdown()
+
 	for c := range input {
 		switch c.Cmd {
 		case "print":
 			fmt.Println(c.Args["msg"])
 		case "lookup-peers":
-			peerTable := <-LookupPeers()
-			log.Println("peers:")
-			for i := range peerTable {
-				fmt.Println(peerTable[i])
+			p := LookupPeers()
+			peerTable := <-p
+			out <- Event{
+				Type: PeersFound,
+				Data: peerTable,
 			}
 		default:
 		}

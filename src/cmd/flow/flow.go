@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"networking"
 )
@@ -17,14 +18,20 @@ func main() {
 		select {
 		case e := <-net:
 			netEvent(e)
-		default:
 		}
 	}
 }
 
 func netEvent(event networking.Event) {
 	switch event.Type {
-	case networking.Connection:
-		log.Println("cliente conectado")
+	case networking.PeersFound:
+		log.Println("\n\n\tpeers encontrados:\n\n")
+		peers, ok := event.Data.([]string)
+		if !ok {
+			log.Fatalf("datos incorrectos para evento 'peers-found'")
+		}
+		for i := range peers {
+			fmt.Printf("\t%s\n", peers[i])
+		}
 	}
 }
