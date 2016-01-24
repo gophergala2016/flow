@@ -56,24 +56,17 @@ func SendMessage(msg string) {
 	if err != nil {
 		fmt.Println("cannot connect to host")
 	}
-<<<<<<< HEAD
-
-
 	c:= make(chan string)
-
-	go handleRequest(conn, c)
-}
-
-
-func handleRequest(conn net.Conn, c chan string) {
-	c:= make(chan string)
-=======
-	c := make(chan string)
->>>>>>> 624098b1d5252b1eeb803a49695c10eff8c1b69b
-
 	go handleConnection(conn, c)
 	c <- msg
 }
+
+
+// func handleRequest(conn net.Conn, c chan string) {
+// 	c := make(chan string)
+// 	go handleConnection(conn, c)
+//
+// }
 
 // func ConnectToPeer(addres string) {
 // 	conn, err := net.Dial("tcp", addres)
@@ -87,20 +80,17 @@ func handleRequest(conn net.Conn, c chan string) {
 // }
 
 func handleConnection(conn net.Conn, c chan string) {
-<<<<<<< HEAD
 
 // 	switch v := <- c ; v {
 // 	case "w" :
 // 		log.Println("")
 // 		conn.Write([]byte("Ejecuta mi codigo"))
 // 	}
-=======
 	// 	switch v := <- c ; v {
 	// 	case "w" :
 	// 		log.Println("")
 	// 		conn.Write([]byte("Ejecuta mi codigo"))
 	// 	}
->>>>>>> 624098b1d5252b1eeb803a49695c10eff8c1b69b
 	// msg := <- c
 	conn.Write([]byte(<- c))
 	conn.Close()
