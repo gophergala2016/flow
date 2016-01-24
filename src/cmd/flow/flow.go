@@ -71,15 +71,22 @@ func uiEvent(event ui.Event) {
 			Args: map[string]string{},
 		}
 	case ui.PeerSelectRequested:
+<<<<<<< HEAD
 		networking.In() <- common.Command{
 			Cmd: "select-peer",
+=======
+		networking.In() <- networking.Command{
+			Cmd:  "select-peer",
+>>>>>>> 624098b1d5252b1eeb803a49695c10eff8c1b69b
 			Args: map[string]string{},
 		}
 	case ui.MessageSendRequested:
 		networking.In() <- networking.Command{
-			Cmd: "send-message",
+			Cmd:  "send-message",
 			Args: map[string]string{"msg": event.Data.(string)},
 		}
+	case ui.UserExit:
+		os.Exit(0)
 	default:
 	}
 }

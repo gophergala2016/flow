@@ -2,9 +2,10 @@ package networking
 
 import (
 	"common"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
 	"github.com/hashicorp/mdns"
 )
 
@@ -83,7 +84,7 @@ func loop(input <-chan common.Command) {
 			if err != nil {
 				out <- Event{
 					Type: Error,
-					Data: fmt.Sprintf("error selecting peer: %s",err),
+					Data: fmt.Sprintf("error selecting peer: %s", err),
 				}
 				fmt.Printf("\nerror selecting peer:\n %s\n", err)
 			} else {

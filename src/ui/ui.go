@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"log"
 	"strings"
+
 	"github.com/peterh/liner"
 )
 
+// EventType define la clase de eventos que se pueden emitir
 type EventType int
 
 const (
+	// PeerLookupRequested significa que el usuario ha pedido un lookup de peers
 	PeerLookupRequested EventType = iota
-
 	PeerSelectRequested
-
 	MessageSendRequested
+	// UserExit significa que el usuario quiere salir del programa
+	UserExit
 )
 
 // Event se utiliza para representar un evento emitido
@@ -46,26 +49,30 @@ func In() chan<- common.Command {
 
 func uiLoop() {
 	line := liner.NewLiner()
-	defer line.Close()
 	line.SetCtrlCAborts(true)
 
-	fmt.Println("\nFlow v0.1.0; Presiona Ctrl+C dos veces para salir.\n")
+	fmt.Print("\n\nFlow v0.1.0\n\nPresiona Ctrl+C para salir\n\n")
 
 	for {
 		if input, err := line.Prompt("flow> "); err == nil {
-			inputs := strings.SplitN(input," ",2)
+			inputs := strings.SplitN(input, " ", 2)
 			if len(inputs) >= 2 {
 				cmd := inputs[0]
 				args := inputs[1]
-				checkCmd(cmd,args)
+				checkCmd(cmd, args)
 			} else {
-				checkCmd(input,"")
+				checkCmd(input, "")
 			}
 		} else if err == liner.ErrPromptAborted {
 			break
 		} else {
 			log.Printf("error de terminal: %s\n", err.Error())
 		}
+	}
+	line.Close()
+	out <- Event{
+		Type: UserExit,
+		Data: nil,
 	}
 }
 
