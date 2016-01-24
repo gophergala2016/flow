@@ -40,9 +40,10 @@ func LookupPeers() <-chan []string {
 func SelectPeer() (string, error) {
 	c := LookupPeers()
 	peers := <-c
+	// fmt.Println(len(peers))
 	//Regresa el segundo elemento de la lista de peers
-	if len(peers) >= 2 {
-		peer_selected := peers[1]
+	if len(peers) > 0 {
+		peer_selected := peers[0]
 		return peer_selected, nil
 	}
 	return "", errors.New("you are alone")
@@ -50,6 +51,7 @@ func SelectPeer() (string, error) {
 
 func SendMessage(msg string) {
 	peer, _ := SelectPeer()
+	// fmt.Println(peer)
 	conn, err := net.Dial("tcp", peer)
 	if err != nil {
 		fmt.Println("cannot connect to host")
@@ -78,6 +80,6 @@ func handleConnection(conn net.Conn, c chan string) {
 	// 		conn.Write([]byte("Ejecuta mi codigo"))
 	// 	}
 	// msg := <- c
-	conn.Write([]byte(<-c))
+	conn.Write([]byte(<- c))
 	conn.Close()
 }

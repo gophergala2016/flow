@@ -60,6 +60,11 @@ func netEvent(event networking.Event) {
 			Cmd:  "print",
 			Args: map[string]string{"msg": peerMsg},
 		}
+	case networking.Error:
+		ui.In() <- common.Command{
+			Cmd:  "print",
+			Args: map[string]string{"msg": event.Data.(string)},
+		}
 	}
 }
 
