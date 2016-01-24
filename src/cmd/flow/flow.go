@@ -1,23 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"networking"
+	"os"
+	"ui"
 )
 
 func main() {
-	net := networking.Start()
-	cmd := networking.Command{
-		Cmd:  "lookup-peers",
-		Args: map[string]string{},
+	f, err := os.OpenFile("flow.log", os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		log.Fatalf("imposible crear archivo de log: %s", err.Error())
 	}
-	networking.In() <- cmd
+	log.SetOutput(f)
+
+	net := networking.Start()
+	ui := ui.Start()
 
 	for {
 		select {
 		case e := <-net:
 			netEvent(e)
+		case e := <-ui:
+			uiEvent(e)
 		}
 	}
 }
@@ -25,13 +30,33 @@ func main() {
 func netEvent(event networking.Event) {
 	switch event.Type {
 	case networking.PeersFound:
-		log.Println("\n\n\tpeers encontrados:\n\n")
 		peers, ok := event.Data.([]string)
 		if !ok {
 			log.Fatalf("datos incorrectos para evento 'peers-found'")
 		}
-		for i := range peers {
-			fmt.Printf("\t%s\n", peers[i])
+		peerMsg := ""
+		if len(peers) == 0 {
+			peerMsg = "No se encontraron peers"
+		} else {
+			peerMsg += "[networking-module]:\n\n"
+			for i := range peers {
+				peerMsg += "\t" + peers[i] + "\n"
+			}
 		}
+		ui.In() <- ui.Command{
+			Cmd:  "print",
+			Args: map[string]string{"msg": peerMsg},
+		}
+	}
+}
+
+func uiEvent(event ui.Event) {
+	switch event.Type {
+	case ui.PeerLookupRequested:
+		networking.In() <- networking.Command{
+			Cmd:  "lookup-peers",
+			Args: map[string]string{},
+		}
+	default:
 	}
 }
