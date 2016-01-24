@@ -46,6 +46,13 @@
 			"revision": "85bf0974ed06e4e668595ae2b4de02e772a2819b",
 			"branch": "master",
 			"path": "/cpu"
+		},
+		{
+			"importpath": "github.com/shirou/gopsutil/internal/common",
+			"repository": "https://github.com/shirou/gopsutil",
+			"revision": "85bf0974ed06e4e668595ae2b4de02e772a2819b",
+			"branch": "master",
+			"path": "/internal/common"
 		}
 	]
 }
