@@ -3,6 +3,7 @@ package main
 import (
 	"common"
 	"fmt"
+	"interp"
 	"log"
 	"networking"
 	"os"
@@ -17,28 +18,21 @@ func main() {
 	}
 	log.SetOutput(f)
 
-	net := networking.Start()
+	network := networking.Start()
 	usage := usage.Start()
 	ui := ui.Start()
-
-	cmd := networking.Command{
-		Cmd: "communicateToPeer",
-		Args: map[string]string{
-			"ip":   "10.6.0.57",
-			"port": "8000",
-		},
-	}
-
-	networking.In() <- cmd
+	interp := interp.Start()
 
 	for {
 		select {
-		case e := <-net:
+		case e := <-network:
 			netEvent(e)
 		case e := <-ui:
 			uiEvent(e)
 		case e := <-usage:
 			usageEvent(e)
+		case e := <-interp:
+			interpEvent(e)
 		}
 	}
 }
@@ -105,6 +99,11 @@ func uiEvent(event ui.Event) {
 			Cmd:  "get-usage",
 			Args: map[string]string{},
 		}
+	case ui.InterpRequested: // temp; luego se hará la selección de peers
+		interp.In() <- common.Command{
+			Cmd:  "interp",
+			Args: map[string]string{"code": event.Data.(string)},
+		}
 	case ui.UserExit:
 		os.Exit(0)
 	default:
@@ -121,6 +120,25 @@ func usageEvent(event usage.Event) {
 			},
 		}
 	case usage.Error:
+		ui.In() <- common.Command{
+			Cmd: "print",
+			Args: map[string]string{
+				"msg": fmt.Sprintf("error: %s", event.Data.(string)),
+			},
+		}
+	}
+}
+
+func interpEvent(event interp.Event) {
+	switch event.Type {
+	case interp.InterpDone:
+		ui.In() <- common.Command{
+			Cmd: "print",
+			Args: map[string]string{
+				"msg": event.Data.(string),
+			},
+		}
+	case interp.Error:
 		ui.In() <- common.Command{
 			Cmd: "print",
 			Args: map[string]string{
