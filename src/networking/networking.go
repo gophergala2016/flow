@@ -96,6 +96,9 @@ func loop(input <-chan Command) {
 					Data: p,
 				}
 			}
+		case "send-message":
+			SendMessage(c.Args["msg"])
+
 		default:
 		}
 	}
