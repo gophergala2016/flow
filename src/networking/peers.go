@@ -1,6 +1,7 @@
 package networking
 
 import (
+	"errors"
 	"fmt"
 	"net"
 
@@ -34,4 +35,51 @@ func LookupPeers() <-chan []string {
 	mdns.Lookup("_flow._tcp", entriesCh)
 	close(entriesCh)
 	return resChan
+}
+
+func SelectPeer() (string, error) {
+	c := LookupPeers()
+	peers := <-c
+	// fmt.Println(len(peers))
+	//Regresa el segundo elemento de la lista de peers
+	if len(peers) > 0 {
+		peer_selected := peers[0]
+		return peer_selected, nil
+	}
+	return "", errors.New("you are alone")
+}
+
+func SendMessage(msg string) {
+	peer, _ := SelectPeer()
+	// fmt.Println(peer)
+	conn, err := net.Dial("tcp", peer)
+	if err != nil {
+		fmt.Println("cannot connect to host")
+	}
+	c := make(chan string)
+
+	go handleConnection(conn, c)
+	c <- msg
+}
+
+// func ConnectToPeer(addres string) {
+// 	conn, err := net.Dial("tcp", addres)
+// 	if err != nil {
+// 		fmt.Println("cannot connect to host")
+// 	}
+//
+// 	c:= make(chan string)
+//
+// 	go handleConnection(conn, c)
+// }
+
+func handleConnection(conn net.Conn, c chan string) {
+	// 	switch v := <- c ; v {
+	// 	case "w" :
+	// 		log.Println("")
+	// 		conn.Write([]byte("Ejecuta mi codigo"))
+	// 	}
+	// msg := <- c
+	conn.Write([]byte(<- c))
+	conn.Close()
 }

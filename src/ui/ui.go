@@ -4,6 +4,7 @@ import (
 	"common"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/peterh/liner"
 )
@@ -14,6 +15,8 @@ type EventType int
 const (
 	// PeerLookupRequested significa que el usuario ha pedido un lookup de peers
 	PeerLookupRequested EventType = iota
+	PeerSelectRequested
+	MessageSendRequested
 	// UsageRequested significa que el usuario quere el uso de su CPU
 	UsageRequested
 	// UserExit significa que el usuario quiere salir del programa
@@ -53,8 +56,15 @@ func uiLoop() {
 	fmt.Print("\n\nFlow v0.1.0\n\nPresiona Ctrl+C para salir\n\n")
 
 	for {
-		if cmd, err := line.Prompt("flow> "); err == nil {
-			checkCmd(cmd)
+		if input, err := line.Prompt("flow> "); err == nil {
+			inputs := strings.SplitN(input, " ", 2)
+			if len(inputs) >= 2 {
+				cmd := inputs[0]
+				args := inputs[1]
+				checkCmd(cmd, args)
+			} else {
+				checkCmd(input, "")
+			}
 		} else if err == liner.ErrPromptAborted {
 			break
 		} else {
@@ -68,12 +78,23 @@ func uiLoop() {
 	}
 }
 
-func checkCmd(cmd string) {
+func checkCmd(cmd string, args string) {
 	switch cmd {
 	case "lookup":
 		fmt.Println("haciendo lookup, por favor espera...")
 		out <- Event{
 			Type: PeerLookupRequested,
+		}
+	case "select-one":
+		fmt.Println("Selecting a peer")
+		out <- Event{
+			Type: PeerSelectRequested,
+		}
+	case "send":
+		fmt.Println("Sending message")
+		out <- Event{
+			Type: MessageSendRequested,
+			Data: args,
 		}
 	case "usage":
 		fmt.Println("obteniendo uso, por favor espera...")

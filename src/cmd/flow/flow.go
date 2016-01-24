@@ -21,6 +21,16 @@ func main() {
 	usage := usage.Start()
 	ui := ui.Start()
 
+	cmd := networking.Command{
+		Cmd: "communicateToPeer",
+		Args: map[string]string{
+			"ip":   "10.6.0.57",
+			"port": "8000",
+		},
+	}
+
+	networking.In() <- cmd
+
 	for {
 		select {
 		case e := <-net:
@@ -53,6 +63,23 @@ func netEvent(event networking.Event) {
 			Cmd:  "print",
 			Args: map[string]string{"msg": peerMsg},
 		}
+	case networking.PeerSelected:
+		peer, ok := event.Data.(string)
+		peerMsg := ""
+		if !ok {
+			log.Fatalf("datos incorrectos para evento 'peers-found'")
+		} else {
+			peerMsg = "selected peer " + peer
+		}
+		ui.In() <- common.Command{
+			Cmd:  "print",
+			Args: map[string]string{"msg": peerMsg},
+		}
+	case networking.Error:
+		ui.In() <- common.Command{
+			Cmd:  "print",
+			Args: map[string]string{"msg": event.Data.(string)},
+		}
 	}
 }
 
@@ -62,6 +89,16 @@ func uiEvent(event ui.Event) {
 		networking.In() <- common.Command{
 			Cmd:  "lookup-peers",
 			Args: map[string]string{},
+		}
+	case ui.PeerSelectRequested:
+		networking.In() <- common.Command{
+			Cmd:  "select-peer",
+			Args: map[string]string{},
+		}
+	case ui.MessageSendRequested:
+		networking.In() <- common.Command{
+			Cmd:  "send-message",
+			Args: map[string]string{"msg": event.Data.(string)},
 		}
 	case ui.UsageRequested:
 		usage.In() <- common.Command{
