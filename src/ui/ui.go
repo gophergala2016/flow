@@ -17,6 +17,8 @@ const (
 	PeerLookupRequested EventType = iota
 	PeerSelectRequested
 	MessageSendRequested
+	// UsageRequested significa que el usuario quere el uso de su CPU
+	UsageRequested
 	// UserExit significa que el usuario quiere salir del programa
 	UserExit
 )
@@ -93,6 +95,11 @@ func checkCmd(cmd string, args string) {
 		out <- Event{
 			Type: MessageSendRequested,
 			Data: args,
+		}
+	case "usage":
+		fmt.Println("obteniendo uso, por favor espera...")
+		out <- Event{
+			Type: UsageRequested,
 		}
 	case "":
 	default:

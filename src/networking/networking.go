@@ -4,6 +4,7 @@ import (
 	"common"
 	"fmt"
 	"log"
+	"net"
 	"os"
 
 	"github.com/hashicorp/mdns"
@@ -95,8 +96,17 @@ func loop(input <-chan common.Command) {
 			}
 		case "send-message":
 			SendMessage(c.Args["msg"])
-
 		default:
 		}
 	}
+}
+
+// en paquete comp
+func handleRequest(conn net.Conn, c chan string) {
+	switch v := <-c; v {
+	case "w":
+		log.Println("alibaba")
+		conn.Write([]byte("Ejecuta mi codigo"))
+	}
+	conn.Close()
 }

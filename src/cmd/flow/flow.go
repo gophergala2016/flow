@@ -2,10 +2,12 @@ package main
 
 import (
 	"common"
+	"fmt"
 	"log"
 	"networking"
 	"os"
 	"ui"
+	"usage"
 )
 
 func main() {
@@ -16,7 +18,18 @@ func main() {
 	log.SetOutput(f)
 
 	net := networking.Start()
+	usage := usage.Start()
 	ui := ui.Start()
+
+	cmd := networking.Command{
+		Cmd:  "communicateToPeer",
+		Args: map[string]string{
+			"ip": "10.6.0.57",
+			"port": "8000",
+			},
+		}
+
+	networking.In() <- cmd
 
 	for {
 		select {
@@ -24,6 +37,8 @@ func main() {
 			netEvent(e)
 		case e := <-ui:
 			uiEvent(e)
+		case e := <-usage:
+			usageEvent(e)
 		}
 	}
 }
@@ -75,6 +90,7 @@ func uiEvent(event ui.Event) {
 			Cmd:  "lookup-peers",
 			Args: map[string]string{},
 		}
+<<<<<<< HEAD
 	case ui.PeerSelectRequested:
 		networking.In() <- common.Command{
 			Cmd: "select-peer",
@@ -85,8 +101,34 @@ func uiEvent(event ui.Event) {
 			Cmd:  "send-message",
 			Args: map[string]string{"msg": event.Data.(string)},
 		}
+=======
+	case ui.UsageRequested:
+		usage.In() <- common.Command{
+			Cmd:  "get-usage",
+			Args: map[string]string{},
+		}
+>>>>>>> arturo
 	case ui.UserExit:
 		os.Exit(0)
 	default:
+	}
+}
+
+func usageEvent(event usage.Event) {
+	switch event.Type {
+	case usage.UsageReport:
+		ui.In() <- common.Command{
+			Cmd: "print",
+			Args: map[string]string{
+				"msg": fmt.Sprintf("%f", event.Data.(float64)),
+			},
+		}
+	case usage.Error:
+		ui.In() <- common.Command{
+			Cmd: "print",
+			Args: map[string]string{
+				"msg": fmt.Sprintf("error: %s", event.Data.(string)),
+			},
+		}
 	}
 }
