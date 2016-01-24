@@ -2,6 +2,26 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "github.com/glycerine/goconvey/convey",
+			"repository": "https://github.com/glycerine/goconvey",
+			"revision": "b782d357132a984d00d2fa42b37956e4889c6c13",
+			"branch": "master",
+			"path": "/convey"
+		},
+		{
+			"importpath": "github.com/glycerine/liner",
+			"repository": "https://github.com/glycerine/liner",
+			"revision": "72909af234e0e355af10d0ace679446a6c5d7ec3",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/glycerine/zygomys/repl",
+			"repository": "https://github.com/glycerine/zygomys",
+			"revision": "a492d2aa38f4c955ac0b57ad6beab95dc9b4c5fe",
+			"branch": "master",
+			"path": "/repl"
+		},
+		{
 			"importpath": "github.com/hashicorp/go.net/internal/iana",
 			"repository": "https://github.com/hashicorp/go.net",
 			"revision": "104dcad90073cd8d1e6828b2af19185b60cf3e29",
@@ -29,6 +49,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/jtolds/gls",
+			"repository": "https://github.com/jtolds/gls",
+			"revision": "8ddce2a84170772b95dd5d576c48d517b22cac63",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/miekg/dns",
 			"repository": "https://github.com/miekg/dns",
 			"revision": "5c01f20c3a6b2acb2b5222c0aa9732a2f219b4b3",
@@ -38,6 +64,12 @@
 			"importpath": "github.com/peterh/liner",
 			"repository": "https://github.com/peterh/liner",
 			"revision": "72909af234e0e355af10d0ace679446a6c5d7ec3",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/philhofer/fwd",
+			"repository": "https://github.com/philhofer/fwd",
+			"revision": "19fb8901f06c7339efa8e2eb54544b0d2ed5af01",
 			"branch": "master"
 		},
 		{
@@ -53,6 +85,75 @@
 			"revision": "85bf0974ed06e4e668595ae2b4de02e772a2819b",
 			"branch": "master",
 			"path": "/internal/common"
+		},
+		{
+			"importpath": "github.com/shurcooL/go-goon",
+			"repository": "https://github.com/shurcooL/go-goon",
+			"revision": "ba57724c4f5117dc5ec4fabac854b2b073eac5e4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist5258650",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist5258650"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist5639599",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist5639599"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist5707298",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist5707298"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist6418290",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist6418290"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist6418462",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist6418462"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist6433744",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist6433744"
+		},
+		{
+			"importpath": "github.com/shurcooL/go/gists/gist6445065",
+			"repository": "https://github.com/shurcooL/go",
+			"revision": "4d829e4f99c3765122ba92c78b8f69cc0392983d",
+			"branch": "master",
+			"path": "/gists/gist6445065"
+		},
+		{
+			"importpath": "github.com/tinylib/msgp/msgp",
+			"repository": "https://github.com/tinylib/msgp",
+			"revision": "0d29f4bb1d9c5d1ad8ad54e0507ca54c0fa50482",
+			"branch": "master",
+			"path": "/msgp"
+		},
+		{
+			"importpath": "github.com/ugorji/go/codec",
+			"repository": "https://github.com/ugorji/go",
+			"revision": "646ae4a518c1c3be0739df898118d9bccf993858",
+			"branch": "master",
+			"path": "/codec"
 		}
 	]
 }
