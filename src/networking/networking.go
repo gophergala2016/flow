@@ -79,12 +79,13 @@ func loop(input <-chan common.Command) {
 				Data: peerTable,
 			}
 		case "select-peer":
-			p,err := SelectPeer()
+			p, err := SelectPeer()
 			if err != nil {
 				out <- Event{
 					Type: Error,
 					Data: fmt.Sprintf("error selecting peer: %s",err),
 				}
+				fmt.Printf("\nerror selecting peer:\n %s\n", err)
 			} else {
 				out <- Event{
 					Type: PeerSelected,
