@@ -58,6 +58,8 @@ func uiEvent(event ui.Event) {
 			Cmd:  "lookup-peers",
 			Args: map[string]string{},
 		}
+	case ui.UserExit:
+		os.Exit(0)
 	default:
 	}
 }
