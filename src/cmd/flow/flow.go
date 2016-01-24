@@ -1,6 +1,7 @@
 package main
 
 import (
+	"common"
 	"log"
 	"networking"
 	"os"
@@ -43,7 +44,7 @@ func netEvent(event networking.Event) {
 				peerMsg += "\t" + peers[i] + "\n"
 			}
 		}
-		ui.In() <- ui.Command{
+		ui.In() <- common.Command{
 			Cmd:  "print",
 			Args: map[string]string{"msg": peerMsg},
 		}
@@ -53,7 +54,7 @@ func netEvent(event networking.Event) {
 func uiEvent(event ui.Event) {
 	switch event.Type {
 	case ui.PeerLookupRequested:
-		networking.In() <- networking.Command{
+		networking.In() <- common.Command{
 			Cmd:  "lookup-peers",
 			Args: map[string]string{},
 		}

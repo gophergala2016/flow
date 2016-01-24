@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"common"
 	"fmt"
 	"log"
 
@@ -19,17 +20,11 @@ type Event struct {
 	Data interface{}
 }
 
-// Command se utiliza para mandar comandos a este módulo
-type Command struct {
-	Cmd  string
-	Args map[string]string
-}
-
-var in chan Command
+var in chan common.Command
 var out chan Event
 
 func init() {
-	in = make(chan Command)
+	in = make(chan common.Command)
 	out = make(chan Event)
 }
 
@@ -41,7 +36,7 @@ func Start() <-chan Event {
 }
 
 // In regresa el channel para mandar comandos al módulo
-func In() chan<- Command {
+func In() chan<- common.Command {
 	return in
 }
 
@@ -76,7 +71,7 @@ func checkCmd(cmd string) {
 	}
 }
 
-func moduleLoop(input <-chan Command) {
+func moduleLoop(input <-chan common.Command) {
 	for c := range input {
 		switch c.Cmd {
 		case "print":

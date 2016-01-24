@@ -1,6 +1,7 @@
 package networking
 
 import (
+	"common"
 	"log"
 	"os"
 
@@ -29,17 +30,11 @@ type Event struct {
 	Data interface{}
 }
 
-// Command se utiliza para mandar comandos a este módulo
-type Command struct {
-	Cmd  string
-	Args map[string]string
-}
-
-var in chan Command
+var in chan common.Command
 var out chan Event
 
 func init() {
-	in = make(chan Command)
+	in = make(chan common.Command)
 	out = make(chan Event)
 }
 
@@ -50,11 +45,11 @@ func Start() <-chan Event {
 }
 
 // In regresa el channel para mandar comandos al módulo
-func In() chan<- Command {
+func In() chan<- common.Command {
 	return in
 }
 
-func loop(input <-chan Command) {
+func loop(input <-chan common.Command) {
 	host, err := os.Hostname()
 	if err != nil {
 		log.Fatal("imposible obtener hostname para publicar servicio mDNS")
