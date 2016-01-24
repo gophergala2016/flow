@@ -1,6 +1,12 @@
 package networking
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/hashicorp/mdns"
+)
 
 // EventType define la clase de eventos que se pueden emitir
 type EventType int
@@ -50,10 +56,27 @@ func In() chan<- Command {
 }
 
 func loop(input <-chan Command) {
+	host, _ := os.Hostname()
+	info := []string{"Flow peer worker"}
+	service, err := mdns.NewMDNSService(host, "_flow._tcp", "", "", 8000, nil, info)
+	if err != nil {
+		log.Fatalf("imposible crear servidor mDNS: %s", err.Error())
+	}
+	server, err := mdns.NewServer(&mdns.Config{Zone: service})
+	if err != nil {
+		log.Fatalf("imposible iniciar servidor mDNS: %s", err.Error())
+	}
+	defer server.Shutdown()
 	for c := range input {
 		switch c.Cmd {
 		case "print":
 			fmt.Println(c.Args["msg"])
+		case "lookup-peers":
+			peerTable := <-LookupPeers()
+			log.Println("peers:")
+			for i := range peerTable {
+				fmt.Println(peerTable[i])
+			}
 		default:
 		}
 	}

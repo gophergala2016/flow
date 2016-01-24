@@ -7,10 +7,11 @@ import (
 
 func main() {
 	net := networking.Start()
-	/*cmd := networking.Command{
-		Cmd:  "print",
-		Args: map[string]string{"msg": "\nhola putos\n"},
-	}*/
+	cmd := networking.Command{
+		Cmd:  "lookup-peers",
+		Args: map[string]string{},
+	}
+	networking.In() <- cmd
 
 	for {
 		select {
