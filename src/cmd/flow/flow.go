@@ -56,7 +56,7 @@ func netEvent(event networking.Event) {
 		} else {
 			peerMsg = "selected peer " + peer
 		}
-		ui.In() <- ui.Command{
+		ui.In() <- common.Command{
 			Cmd:  "print",
 			Args: map[string]string{"msg": peerMsg},
 		}
@@ -71,12 +71,12 @@ func uiEvent(event ui.Event) {
 			Args: map[string]string{},
 		}
 	case ui.PeerSelectRequested:
-		networking.In() <- networking.Command{
+		networking.In() <- common.Command{
 			Cmd:  "select-peer",
 			Args: map[string]string{},
 		}
 	case ui.MessageSendRequested:
-		networking.In() <- networking.Command{
+		networking.In() <- common.Command{
 			Cmd:  "send-message",
 			Args: map[string]string{"msg": event.Data.(string)},
 		}
