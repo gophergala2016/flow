@@ -26,6 +26,10 @@ const (
 	Interp
 	// A peer has been chosen
 	PeerSelected
+	// Get user processing usage
+	UsageRequested
+	// Ask user to exec something
+	ExecuteCmd
 	//ERROR
 	Error
 )

@@ -11,11 +11,6 @@ const (
     CONN_HOST = "0.0.0.0"
     CONN_PORT = "3569"
     CONN_TYPE = "tcp"
-    // Get user processing usage
-    UsageRequested EventType = iota
-    // Ask user to exec something
-    ExecuteCmd
-
 )
 
 var ipTable = map[string]chan Event {}
