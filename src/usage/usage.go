@@ -49,7 +49,6 @@ func loop(input <-chan common.Command) {
 		switch c.Cmd {
 		case "get-usage-self":
 			usage, err := cpu.CPUPercent(time.Duration(1)*time.Second, false)
-			fmt.Println(len(usage))
 			if err != nil {
 				out <- Event{
 					Type: Error,
@@ -63,7 +62,6 @@ func loop(input <-chan common.Command) {
 			}
 		case "get-usage":
 			usage, err := cpu.CPUPercent(time.Duration(1)*time.Second, false)
-			fmt.Println(len(usage))
 			if err != nil {
 				out <- Event{
 					Type: Error,
@@ -73,7 +71,7 @@ func loop(input <-chan common.Command) {
 				out <- Event{
 					Type: UsageReport,
 					Data: map[string]string{
-						"peer": c.Args["peer"],
+						"peer":  c.Args["peer"],
 						"usage": fmt.Sprintf("%f", usage[0]),
 					},
 				}

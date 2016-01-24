@@ -26,6 +26,10 @@ const (
 	Interp
 	// A peer has been chosen
 	PeerSelected
+	// Get user processing usage
+	UsageRequested
+	// Ask user to exec something
+	ExecuteCmd
 	//ERROR
 	Error
 )
@@ -95,8 +99,10 @@ func loop(input <-chan common.Command) {
 					Data: p,
 				}
 			}
-		case "send-message":
-			SendMessage(c.Args["msg"])
+		case "send-usage":
+			ipTable[c.Args["peer"]] <- c.Args["usage"]
+			close(ipTable[c.Args["peer"]])
+			delete(ipTable, c.Args["peer"])
 		default:
 		}
 	}

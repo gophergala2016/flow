@@ -1,90 +1,85 @@
 package networking
 
 import (
-    "fmt"
-    "net"
-    "bytes"
-    "os"
+	"bytes"
+	"fmt"
+	"log"
+	"net"
+	"os"
 )
 
 const (
-    CONN_HOST = "0.0.0.0"
-    CONN_PORT = "3569"
-    CONN_TYPE = "tcp"
-    // Get user processing usage
-    UsageRequested EventType = iota
-    // Ask user to exec something
-    ExecuteCmd
-
+	CONN_HOST = "0.0.0.0"
+	CONN_PORT = "3569"
+	CONN_TYPE = "tcp"
 )
 
-var ipTable = map[string]chan Event {}
+var ipTable = map[string]chan string{}
 
 func setServer() {
-    l, err := net.Listen(CONN_TYPE, CONN_HOST + ":" + CONN_PORT)
-    if err != nil {
-        fmt.Println("connection error:", err.Error())
-        os.Exit(1)
-    }
+	l, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	if err != nil {
+		fmt.Println("connection error:", err.Error())
+		os.Exit(1)
+	}
 
-    // Close the listener when the application closes.
-    defer l.Close()
-    fmt.Println("Listening on " + CONN_HOST + ":" + CONN_PORT)
-    for {
-        // Listen for an incoming connection.
-        conn, err := l.Accept()
-        if err != nil {
-            fmt.Println("Error accepting: ", err.Error())
-            os.Exit(1)
-        }
+	// Close the listener when the application closes.
+	defer l.Close()
+	log.Println("Listening on " + CONN_HOST + ":" + CONN_PORT)
+	for {
+		// Listen for an incoming connection.
+		conn, err := l.Accept()
+		if err != nil {
+			fmt.Println("Error accepting: ", err.Error())
+			os.Exit(1)
+		}
 
-        c := make(chan Event)
-        ipTable[conn.RemoteAddr().String()] = c
+		c := make(chan string)
+		ipTable[conn.RemoteAddr().String()] = c
 
-        // Handle connections in a new goroutine.
-        go handleRequest(conn, c)
-    }
+		// Handle connections in a new goroutine.
+		go handleRequest(conn, c)
+	}
 }
 
-func handleRequest(conn net.Conn, can_server chan Event) {
-    // Make a buffer to hold incoming data.
-    buf := make([]byte, 1024)
-    // Read the incoming connection into the buffer.
-    _, err := conn.Read(buf)
-    if err != nil {
-    fmt.Println("Error reading:", err.Error())
-    }
+func handleRequest(conn net.Conn, chan_server chan string) {
+	// Make a buffer to hold incoming data.
+	buf := make([]byte, 1024)
+	// Read the incoming connection into the buffer.
+	_, err := conn.Read(buf)
+	if err != nil {
+		log.Printf("error reading: %s", err.Error())
+	}
 
-    // Index returns the index of the first instance of sep
-    n := bytes.Index(buf, []byte{0})
-    request := string(buf[:n])
+	// Index returns the index of the first instance of sep
+	n := bytes.Index(buf, []byte{0})
+	request := string(buf[:n])
 
-    //c := make(chan Event)
+	//c := make(chan Event)
 
-    switch request {
-    case "usage":
-        out <- Event{
-          Type: UsageRequested,
-          Data: conn.RemoteAddr().String(),
-        }
-    //case "exec":  go Exec(conn, c)
-    }
+	switch request {
+	case "usage":
+		out <- Event{
+			Type: UsageRequested,
+			Data: conn.RemoteAddr().String(),
+		}
+	default:
+		conn.Write([]byte("fuck you\n\n\a\a\a"))
+		conn.Close()
+		//case "exec":  go Exec(conn, c)
+	}
 
-
-    // Send a response back to person contacting us.
-    conn.Write([]byte("Message received.\n"))
-    conn.Write(buf)
-    conn.Write([]byte("\n"))
-
-
-
-    // Close the connection when you're done with it.
-    conn.Close()
+	go writeToConnection(conn, chan_server)
 }
 
+func writeToConnection(conn net.Conn, in <-chan string) {
+	for s := range in {
+		conn.Write([]byte(s))
+	}
+	conn.Close()
+}
 
-
-func AskUsage(conn net.Conn,c chan Event) {
+func AskUsage(conn net.Conn, c chan Event) {
 
 }
 
