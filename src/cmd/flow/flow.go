@@ -12,6 +12,13 @@ func main() {
 		Args: map[string]string{"msg": "\nhola putos\n"},
 	}*/
 
+	cmd := networking.Command{
+		Cmd:  "communicateToPeer",
+		Args: map[string]string{
+			"ip": "...",
+			"port" "..."
+		}
+
 	for {
 		select {
 		case e := <-net:

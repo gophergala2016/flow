@@ -1,6 +1,9 @@
 package networking
 
-import "fmt"
+import (
+	"fmt"
+	"net"
+)
 
 // EventType define la clase de eventos que se pueden emitir
 type EventType int
@@ -54,7 +57,25 @@ func loop(input <-chan Command) {
 		switch c.Cmd {
 		case "print":
 			fmt.Println(c.Args["msg"])
+		case "communicateToPeer":
+			hostPort := net.JoinHostPort(c.Arg["ip"], c.Arg["port"])
+			conn, err := net.Dial("tcp", hostPort)
+			if err != nil {
+				fmt.Println("Cannot connect to host")
+			}
+			c := make(chan string)
+			c <- "w" // [w, r, x]
+			go comp.HandleRequest(conn, c chan string)
 		default:
 		}
 	}
+}
+
+// en paquete comp
+func handleRequest(conn net.Conn, c chan Algo) {
+	switch v := <- c ; v {
+	case "w" :
+		conn.Write([]byte("Ejecuta mi codigo"))	
+	}
+	conn.Close()
 }
