@@ -3,7 +3,7 @@ package networking
 import (
 	"log"
 	"os"
-
+	"fmt"
 	"github.com/hashicorp/mdns"
 )
 
@@ -21,6 +21,10 @@ const (
 	PeersFound
 	// Interp representa una solicitud de interpretación
 	Interp
+	// A peer has been chosen
+	PeerSelected
+	//ERROR
+	Error
 )
 
 // Event se utiliza para representar un evento emitido
@@ -78,6 +82,19 @@ func loop(input <-chan Command) {
 			out <- Event{
 				Type: PeersFound,
 				Data: peerTable,
+			}
+		case "select-peer":
+			p,err := SelectPeer()
+			if err != nil {
+				out <- Event{
+					Type: Error,
+					Data: fmt.Sprintf("error selecting peer: %s",err),
+				}
+			} else {
+				out <- Event{
+					Type: PeerSelected,
+					Data: p,
+				}
 			}
 		default:
 		}
