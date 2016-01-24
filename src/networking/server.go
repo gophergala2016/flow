@@ -3,8 +3,8 @@ package networking
 import (
     "fmt"
     "net"
-    "common"
     "bytes"
+    "os"
 )
 
 const (
@@ -12,20 +12,21 @@ const (
     CONN_PORT = "3569"
     CONN_TYPE = "tcp"
     // Get user processing usage
-    AskUsage EventType = iota
+    UsageRequested EventType = iota
     // Ask user to exec something
     ExecuteCmd
 
 )
 
+var ipTable = map[string]chan Event {}
 
-
-func SetServer() {
+func setServer() {
     l, err := net.Listen(CONN_TYPE, CONN_HOST + ":" + CONN_PORT)
     if err != nil {
         fmt.Println("connection error:", err.Error())
         os.Exit(1)
     }
+
     // Close the listener when the application closes.
     defer l.Close()
     fmt.Println("Listening on " + CONN_HOST + ":" + CONN_PORT)
@@ -37,15 +38,15 @@ func SetServer() {
             os.Exit(1)
         }
 
-        //logs an incoming message
-        fmt.Printf("Received message %s -> %s \n", conn.RemoteAddr(), conn.LocalAddr())
+        c := make(chan Event)
+        ipTable[conn.RemoteAddr().String()] = c
 
         // Handle connections in a new goroutine.
-        go handleRequest(conn)
+        go handleRequest(conn, c)
     }
 }
 
-func handleRequest(conn net.Conn) {
+func handleRequest(conn net.Conn, can_server chan Event) {
     // Make a buffer to hold incoming data.
     buf := make([]byte, 1024)
     // Read the incoming connection into the buffer.
@@ -56,13 +57,17 @@ func handleRequest(conn net.Conn) {
 
     // Index returns the index of the first instance of sep
     n := bytes.Index(buf, []byte{0})
-    request := string(buf[:n]))
+    request := string(buf[:n])
 
-    c := make(chan Event)
+    //c := make(chan Event)
 
     switch request {
-    case "usage": go SendUsage(conn, c)
-    case "exec":  go Exec(conn, c)
+    case "usage":
+        out <- Event{
+          Type: UsageRequested,
+          Data: conn.RemoteAddr().String(),
+        }
+    //case "exec":  go Exec(conn, c)
     }
 
 
@@ -79,15 +84,14 @@ func handleRequest(conn net.Conn) {
 
 
 
-func SendUsage(conn net.Conn,c chan Event) {
+func AskUsage(conn net.Conn,c chan Event) {
 
 }
 
-func Exec(conn net.Conn, c chan common.Command) {
-    com := <- c 
-    switch com.Cmd {
-    case "print" : fmt.Println(com.Args["msg"])
-    default :
-    }
-
-}
+// func Exec(conn net.Conn, c chan Event) {
+//     com := <- c
+//     switch com.Cmd {
+//     case "print" : fmt.Println(com.Args["msg"])
+//     default :
+//     }
+//}

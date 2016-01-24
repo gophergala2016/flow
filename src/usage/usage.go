@@ -13,7 +13,8 @@ type EventType int
 
 const (
 	// UsageReport significa que el módulo está enviando el uso de cpu
-	UsageReport EventType = iota
+	SelfUsageReport EventType = iota
+	UsageReport
 	// Error reporta un error
 	Error
 )
@@ -46,6 +47,20 @@ func In() chan<- common.Command {
 func loop(input <-chan common.Command) {
 	for c := range input {
 		switch c.Cmd {
+		case "get-usage-self":
+			usage, err := cpu.CPUPercent(time.Duration(1)*time.Second, false)
+			fmt.Println(len(usage))
+			if err != nil {
+				out <- Event{
+					Type: Error,
+					Data: fmt.Sprintf("imposible obtener uso de CPU: %s", err.Error()),
+				}
+			} else {
+				out <- Event{
+					Type: SelfUsageReport,
+					Data: usage[0],
+				}
+			}
 		case "get-usage":
 			usage, err := cpu.CPUPercent(time.Duration(1)*time.Second, false)
 			fmt.Println(len(usage))
@@ -57,7 +72,10 @@ func loop(input <-chan common.Command) {
 			} else {
 				out <- Event{
 					Type: UsageReport,
-					Data: usage[0],
+					Data: map[string]string{
+						"peer": c.Args["peer"],
+						"usage": fmt.Sprintf("%f", usage[0]),
+					},
 				}
 			}
 		default:

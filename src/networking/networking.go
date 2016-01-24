@@ -4,7 +4,7 @@ import (
 	"common"
 	"fmt"
 	"log"
-	"net"
+
 	"os"
 
 	"github.com/hashicorp/mdns"
@@ -47,6 +47,7 @@ func init() {
 // Start inicia el módulo
 func Start() <-chan Event {
 	go loop(in)
+	go setServer()
 	return out
 }
 
@@ -101,12 +102,12 @@ func loop(input <-chan common.Command) {
 	}
 }
 
-// en paquete comp
-func handleRequest(conn net.Conn, c chan string) {
-	switch v := <-c; v {
-	case "w":
-		log.Println("alibaba")
-		conn.Write([]byte("Ejecuta mi codigo"))
-	}
-	conn.Close()
-}
+// // en paquete comp
+// func handleRequest(conn net.Conn, c chan string) {
+// 	switch v := <-c; v {
+// 	case "w":
+// 		log.Println("alibaba")
+// 		conn.Write([]byte("Ejecuta mi codigo"))
+// 	}
+// 	conn.Close()
+// }
