@@ -11,11 +11,12 @@ func usageEvent(event usage.Event) {
 	case usage.SelfUsageReport:
 		uiPrint(fmt.Sprintf("%f", event.Data.(float64)))
 	case usage.UsageReport:
+		evData := event.Data.(map[string]string)
 		args := map[string]string{
-			"usage": event.Data.(map[string]string)["usage"],
-			"peer":  event.Data.(map[string]string)["peer"],
+			"peer": evData["peer"],
+			"msg":  evData["usage"],
 		}
-		sendNetworkingCommand("send-usage", args)
+		sendNetworkingCommand("send", args)
 	case usage.Error:
 		uiPrint(fmt.Sprintf("error: %s", event.Data.(string)))
 	}
