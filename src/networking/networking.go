@@ -1,6 +1,14 @@
 package networking
 
-import "fmt"
+import (
+	"common"
+	"fmt"
+	"log"
+
+	"os"
+
+	"github.com/hashicorp/mdns"
+)
 
 // EventType define la clase de eventos que se pueden emitir
 type EventType int
@@ -16,6 +24,14 @@ const (
 	PeersFound
 	// Interp representa una solicitud de interpretación
 	Interp
+	// A peer has been chosen
+	PeerSelected
+	// Get user processing usage
+	UsageRequested
+	// Ask user to exec something
+	EvalRequested
+	//ERROR
+	Error
 )
 
 // Event se utiliza para representar un evento emitido
@@ -24,37 +40,80 @@ type Event struct {
 	Data interface{}
 }
 
-// Command se utiliza para mandar comandos a este módulo
-type Command struct {
-	Cmd  string
-	Args map[string]string
-}
-
-var in chan Command
+var in chan common.Command
 var out chan Event
 
 func init() {
-	in = make(chan Command)
+	in = make(chan common.Command)
 	out = make(chan Event)
 }
 
 // Start inicia el módulo
 func Start() <-chan Event {
 	go loop(in)
+	go setServer()
 	return out
 }
 
 // In regresa el channel para mandar comandos al módulo
-func In() chan<- Command {
+func In() chan<- common.Command {
 	return in
 }
 
-func loop(input <-chan Command) {
+func loop(input <-chan common.Command) {
+	host, err := os.Hostname()
+	if err != nil {
+		log.Fatal("imposible obtener hostname para publicar servicio mDNS")
+	}
+	info := []string{"Flow distributed computing peer"}
+	service, err := mdns.NewMDNSService(host, "_flow._tcp", "", "", 3569, nil, info)
+	if err != nil {
+		log.Fatal("imposible crear servicio de mDNS")
+	}
+	server, err := mdns.NewServer(&mdns.Config{Zone: service})
+	if err != nil {
+		log.Fatal("imposible iniciar servicio de mDNS")
+	}
+	defer server.Shutdown()
+
 	for c := range input {
 		switch c.Cmd {
-		case "print":
-			fmt.Println(c.Args["msg"])
+		case "lookup-peers":
+			p := LookupPeers()
+			peerTable := <-p
+			out <- Event{
+				Type: PeersFound,
+				Data: peerTable,
+			}
+		case "select-peer":
+			p, err := SelectPeer()
+			if err != nil {
+				out <- Event{
+					Type: Error,
+					Data: fmt.Sprintf("error selecting peer: %s", err),
+				}
+				fmt.Printf("\nerror selecting peer:\n %s\n", err)
+			} else {
+				out <- Event{
+					Type: PeerSelected,
+					Data: p,
+				}
+			}
+		case "send":
+			ipTable[c.Args["peer"]] <- c.Args["msg"]
+			close(ipTable[c.Args["peer"]])
+			delete(ipTable, c.Args["peer"])
 		default:
 		}
 	}
 }
+
+// // en paquete comp
+// func handleRequest(conn net.Conn, c chan string) {
+// 	switch v := <-c; v {
+// 	case "w":
+// 		log.Println("alibaba")
+// 		conn.Write([]byte("Ejecuta mi codigo"))
+// 	}
+// 	conn.Close()
+// }
