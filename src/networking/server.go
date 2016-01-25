@@ -82,7 +82,7 @@ func handleRequest(conn net.Conn, chan_server chan string) {
 					Type: EvalRequested,
 					Data: map[string]string{
 						"peer": conn.RemoteAddr().String(),
-						"code": ss[2],
+						"code": ss[1],
 					},
 				}
 			}
