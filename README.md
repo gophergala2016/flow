@@ -76,3 +76,11 @@ Press Enter to continue...
 Other people using Flow send you a `"usage"` request to know what your CPU usage
 is. If it's lower a fixed threshold, then Flow can pick you to execute their
 code. It runs in the background and you would never notice it.
+
+
+## Team [menteslibres.io](https://menteslibres.io)
+
+- [Arturo Vergara](https://github.com/ArturoVM)
+- [Eduardo Villaseñor](https://github.com/evalvarez12)
+- [Leonardo Castro](https://github.com/LeonardoCastro)
+- [Rodrigo Leal](https://github.com/rodrigolece)
