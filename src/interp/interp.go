@@ -49,7 +49,6 @@ func loop(input <-chan common.Command) {
 	for c := range input {
 		switch c.Cmd {
 		case "interp":
-			fmt.Println(c.Args["code"])
 			if err := env.LoadString(c.Args["code"]); err != nil {
 				env.Clear()
 				out <- Event{
