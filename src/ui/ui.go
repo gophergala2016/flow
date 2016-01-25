@@ -85,7 +85,7 @@ func uiLoop() {
 
 func checkCmd(cmd string, args string) {
 	switch cmd {
-	case "lookup":
+	case "inspect":
 		fmt.Println("haciendo lookup, por favor espera...")
 		out <- Event{
 			Type: PeerLookupRequested,
