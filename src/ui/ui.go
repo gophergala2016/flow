@@ -58,7 +58,7 @@ func uiLoop() {
 	line := liner.NewLiner()
 	line.SetCtrlCAborts(true)
 
-	fmt.Print("\n\nFlow v0.1.0\n\nPresiona Ctrl+C para salir\n\n")
+	fmt.Print("\n\nFlow v0.1.0\n\nPress Ctrl+C twice to exit\n\n")
 
 	for {
 		if input, err := line.Prompt("flow> "); err == nil {
