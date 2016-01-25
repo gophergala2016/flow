@@ -29,7 +29,7 @@ const (
 	// Get user processing usage
 	UsageRequested
 	// Ask user to exec something
-	ExecuteCmd
+	EvalRequested
 	//ERROR
 	Error
 )
@@ -99,8 +99,8 @@ func loop(input <-chan common.Command) {
 					Data: p,
 				}
 			}
-		case "send-usage":
-			ipTable[c.Args["peer"]] <- c.Args["usage"]
+		case "send":
+			ipTable[c.Args["peer"]] <- c.Args["msg"]
 			close(ipTable[c.Args["peer"]])
 			delete(ipTable, c.Args["peer"])
 		default:

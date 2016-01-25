@@ -40,6 +40,9 @@ func netEvent(event networking.Event) {
 	case networking.UsageRequested:
 		args := map[string]string{"peer": event.Data.(string)}
 		sendUsageCommand("get-usage", args)
+	case networking.EvalRequested:
+		args := event.Data.(map[string]string)
+		sendInterpCommand("interp", args)
 	case networking.Error:
 		uiPrint(event.Data.(string))
 	}
