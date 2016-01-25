@@ -30,7 +30,7 @@ To run Flow, you use `bin/flow`.
 
 ## Interface
 
-The Flow interface looks like
+The Flow interface looks like this:
 
 ```
 
