@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 )
 
 const (
@@ -64,8 +65,31 @@ func handleRequest(conn net.Conn, chan_server chan string) {
 			Data: conn.RemoteAddr().String(),
 		}
 	default:
-		conn.Write([]byte("fuck you\n\n\a\a\a"))
-		conn.Close()
+		s := strings.SplitN(request, "::", 2)
+		cmd := s[0]
+		args := s[1]
+		switch cmd {
+		case "eval":
+			ss := strings.SplitN(args, "|:|flow-code|:|", 3)
+			if len(ss) != 3 {
+				out <- Event{
+					Type: Error,
+					Data: "mal formato",
+				}
+				conn.Close()
+			} else {
+				out <- Event{
+					Type: EvalRequested,
+					Data: map[string]string{
+						"peer": conn.RemoteAddr().String(),
+						"code": ss[2],
+					},
+				}
+			}
+		default:
+			conn.Write([]byte("fuck you\n\n\a\a\a"))
+			conn.Close()
+		}
 		//case "exec":  go Exec(conn, c)
 	}
 

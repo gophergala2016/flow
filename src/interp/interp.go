@@ -65,7 +65,10 @@ func loop(input <-chan common.Command) {
 				env.Clear()
 				out <- Event{
 					Type: InterpDone,
-					Data: fmt.Sprintf(expr.SexpString()),
+					Data: map[string]string{
+						"peer":   c.Args["peer"],
+						"result": fmt.Sprintf(expr.SexpString()),
+					},
 				}
 			}
 		}
